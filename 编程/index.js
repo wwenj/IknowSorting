@@ -111,3 +111,117 @@ const MyPromise = function (executor) {
 //     }
 // );
 // 防抖和节流
+const debounce = function (fun, limit = 300) {
+    let timer = null
+    return function (...arg) {
+        const context = this
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+            fun.apply(context, [...arg])
+        }, limit)
+    }
+}
+const throttle = function (fun, limit = 300) {
+    let isJl = false
+    return function (...arg) {
+        if (isJl) return
+        let context = this
+        fun.apply(context, [...arg])
+        isJl = true
+        setTimeout(() => { isJl = false }, limit)
+    }
+}
+// 函数柯里化
+const curry = function (fun) {
+    return function curried(...arg) {
+        if (arg.length >= fun.length) {
+            return fun.apply(this, arg)
+        } else {
+            return function (...arg2) {
+                return curried.apply(this, [...arg, ...arg2])
+            }
+        }
+    }
+}
+// 二分查找
+const search = function (list, target) {
+    let left = 0
+    let right = list.length - 1
+    while (left < right) {
+        const mid = Math.floor((left + right) / 2)
+        const cur = list[mid]
+        if (target === cur) {
+            return mid
+        } else if (target > cur) {
+            left = mid + 1
+        } else {
+            right = right - 1
+        }
+    }
+    return -1
+}
+// call apply实现
+Function.prototype.myCall = function (context = window, ...arg) {
+    context.fn = this
+    let result = context.fn(...arg)
+    delete context.fn
+    return result
+}
+Function.prototype.myApply = function (context = window, arg = []) {
+    context.fn = this
+    let result = Array.isArray(arg) ? context.fn(arg) : context.fn()
+    delete context.fn
+    return result
+}
+Function.prototype.myBind = function (context = window, ...arg) {
+    let that = this
+    // return function (...arg2) {
+    //     that.call(context, [...arg, ...arg2])
+    // }
+
+    let boundFunction = function (...args) {
+        return that.apply(this instanceof boundFunction ? this : context, [...arg, ...arg2]);
+    };
+
+    // 维护原型关系
+    if (that.prototype) {
+        boundFunction.prototype = Object.create(that.prototype);
+    }
+
+    return boundFunction;
+}
+// 斐波那契函数
+const fbnq = function (n) {
+    let a = 0
+    let b = 1
+    let tmp
+    while (n > 0) {
+        tmp = a
+        a = a + b
+        b = tmp
+        n--
+    }
+    return a
+}
+// 最长子串
+function lengthOfLongestSubstring(s) {
+    let windowCharsMap = {};
+    let windowStart = 0;
+    let maxLength = 0;
+
+    for (let i = 0; i < s.length; i++) {
+        const endChar = s[i];
+
+        if (windowCharsMap[endChar] >= windowStart) {
+            windowStart = windowCharsMap[endChar] + 1;
+        }
+
+        windowCharsMap[endChar] = i;
+        maxLength = Math.max(maxLength, i - windowStart + 1);
+    }
+
+    return maxLength;
+}
+
+// 使用示例
+console.log(lengthOfLongestSubstring("abcabcbb")); // 输出 3
