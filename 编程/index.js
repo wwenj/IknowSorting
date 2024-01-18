@@ -192,10 +192,11 @@ Function.prototype.myBind = function (context = window, ...arg) {
 }
 // 斐波那契函数
 const fbnq = function (n) {
-    let a = 0
-    let b = 1
+    let a = 1
+    let b = 0
     let tmp
-    while (n > 0) {
+    while (n > 1) {
+        console.log(a, b)
         tmp = a
         a = a + b
         b = tmp
@@ -203,25 +204,94 @@ const fbnq = function (n) {
     }
     return a
 }
-// 最长子串
-function lengthOfLongestSubstring(s) {
-    let windowCharsMap = {};
-    let windowStart = 0;
-    let maxLength = 0;
-
-    for (let i = 0; i < s.length; i++) {
-        const endChar = s[i];
-
-        if (windowCharsMap[endChar] >= windowStart) {
-            windowStart = windowCharsMap[endChar] + 1;
+console.log(fbnq(0))
+// 最长子串优
+const maxStr = function (str) {
+    let map = {}
+    let max = 0
+    let start = 0
+    let result = []
+    for (let i = 0; i < str.length; i++) {
+        if (map[str[i]] !== undefined && map[str[i]] >= start) {
+            start = map[str[i]] + 1
         }
-
-        windowCharsMap[endChar] = i;
-        maxLength = Math.max(maxLength, i - windowStart + 1);
+        map[str[i]] = i
+        const curLen = (i - start) + 1
+        if (curLen > max) {
+            max = curLen
+            result = [str.slice(start, i + 1)]
+        } else if (curLen === max) {
+            result.push(str.slice(start, i + 1))
+        }
     }
-
-    return maxLength;
+    return result
 }
-
+// console.log(maxStr('abcdcafkikoopwjn'))
+// 最长子串差
+// const maxStr = function (str) {
+//     let str2 = ''
+//     let max = 0
+//     let result = []
+//     for (let i = 0; i < str.length; i++) {
+//         const n = str2.indexOf(str[i])
+//         if (n !== -1) {
+//             // obj[str2] = str2.length
+//             if (str2.length > max) {
+//                 max = str2.length
+//                 result = [str2]
+//             } else if (str2.length === max) {
+//                 result.push(str2)
+//             }
+//             str2 = str2.slice(n + 1) + str[i]
+//         } else {
+//             str2 += str[i]
+//         }
+//     }
+//     if (str2.length > max) {
+//         max = str2.length
+//         result = [str2]
+//     } else if (str2.length === max) {
+//         result.push(str2)
+//     }
+//     return result
+// }
 // 使用示例
-console.log(lengthOfLongestSubstring("abcabcbb")); // 输出 3
+// console.log(lengthOfLongestSubstring("abcabcbb")); // 输出 3
+// 最多出现字符串
+const getMoreStr = function (str) {
+    let obj = {}
+    let max = 0
+    let maxI = undefined
+    for (let i = 0; i < str.length; i++) {
+        if (obj[str[i]]) {
+            obj[str[i]] += 1
+        } else {
+            obj[str[i]] = 1
+        }
+        if (obj[str[i]] > max) {
+            max = obj[str[i]]
+            maxI = [str[i]]
+        } else if (obj[str[i]] === max) {
+            maxI = [...maxI, str[i]]
+        }
+    }
+    return maxI
+}
+// console.log(getMoreStr('ajhuaanhuiu'))
+// 合并两个有序数组
+const merge = function (arr1, arr2) {
+    let arr1Index = 0
+    let arr2Index = 0
+    let result = []
+    while (arr1.length > arr1Index && arr2.length > arr2Index) {
+        if (arr1[arr1Index] < arr2[arr2Index]) {
+            result.push(arr1[arr1Index])
+            arr1Index++
+        } else {
+            result.push(arr2[arr2Index])
+            arr2Index++
+        }
+    }
+    return [...result, ...arr1.slice(arr1Index), ...arr2.slice(arr2Index)]
+}
+// console.log(merge([1, 3, 5, 7, 9], [2, 4, 6, 8]))
